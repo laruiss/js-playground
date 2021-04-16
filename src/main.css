@@ -1,0 +1,23 @@
+:root {
+    --flat-flesh: #fad390;
+    --squash-blossom: #f6b93b;
+
+    --mandarin-red: #e55039;
+    --tomato-red: #eb2f06;
+    --jalapeno-red: #b71540;
+
+    --livid: #6a89cc;
+    --azraq-blue: #4a69bd;
+    --yue-guang-lan-blue: #1e3799;
+    --dark-sapphire: #0c2461;
+
+    --aurora-green: #78e08f;
+    --waterfall: #38ada9;
+    --reef-encounter: #079992;
+
+    --almost-white: #efefef;
+    --default-dark-color: #2c3e50;
+    --ok-color: var(--waterfall);
+    --info-color: var(--livid);
+    --error-color: var(--tomato-red);
+}

@@ -2,11 +2,12 @@
   <div class="home">
     <h1>Oh, un exercice !</h1>
     <h2>
-      Crée une fonction nommée <code>greet</code> qui retourne la chaîne de caractères <code>"Hello world!"</code>
+      Crée une fonction nommée <code>greet</code> qui renvoie la chaîne de caractères <code>"Hello world!"</code>
     </h2>
-    <div
-      ref="editor"
+    <MonacoEditor
+      v-model="code"
       class="editor"
+      language="javascript"
     />
     <div class="text-center">
       <button
@@ -33,14 +34,24 @@
 </template>
 
 <script>
-import * as monaco from 'monaco-editor'
+import MonacoEditor from '@/components/MonacoEditor'
+
+import {
+  getRightFeedback,
+  getWrongFeedback,
+  getErrorFeedback,
+} from '../utils/index.js'
 
 export default {
   name: 'Home',
 
+  components: {
+    MonacoEditor,
+  },
+
   data () {
     return {
-      code: 'const noop = () => {}',
+      code: 'function () {\n  \n}',
       editor: undefined,
       value: '',
       intro: '',
@@ -48,20 +59,6 @@ export default {
       resultClass: '',
       error: '',
     }
-  },
-
-  mounted () {
-    const editor = this.editor = monaco.editor.create(this.$refs.editor, {
-      value: this.value,
-      language: 'javascript',
-    })
-
-    editor.onDidChangeModelContent(event => {
-      const value = editor.getValue()
-      if (this.value !== value) {
-        this.value = value
-      }
-    })
   },
 
   methods: {
@@ -72,29 +69,16 @@ export default {
       this.error = ''
       const checkCode = await fetch('/raw.js').then(res => res.text())
       try {
-        const returnValue = eval(this.value + ';' + checkCode) // eslint-disable-line
+        const returnValue = eval(this.code + ';' + checkCode) // eslint-disable-line
         if (returnValue) {
-          this.result = [
-            'Yay, beau-gosse !',
-            'Mais tay trop fort !',
-            'Super ! On va plus loin ?',
-            'Génial ! On continue ?',
-          ][4 * Math.random() | 0]
+          this.result = getRightFeedback()
           this.resultClass = 'text-green'
         } else {
           this.resultClass = 'text-orange'
-          this.result = [
-            'Essaie encore une fois',
-            'Mmh, il doit manquer quelque chose...',
-            'Tu as tout vérifié ?',
-          ][3 * Math.random() | 0]
+          this.result = getWrongFeedback()
         }
       } catch (error) {
-        this.intro = [
-          'Aïe, une erreur a surgi ! La voici :',
-          "Oups, je crois que quelqu'un n'est pas content, voici ce qu'il m'a dit :",
-          "Mmh, j'ai une mauvaise nouvelle. Je ne sais pas comment te le dire autrement :",
-        ][3 * Math.random() | 0] + ' '
+        this.intro = getErrorFeedback()
         this.error = error.message
       }
     },
@@ -131,7 +115,8 @@ export default {
 
 .btn {
   font-weight: 600;
-  background-color: #55ee55;
+  background-color: var(--ok-color);
+  color: var(--almost-white);
   padding: 1em;
   text-transform: uppercase;
   border: none;
