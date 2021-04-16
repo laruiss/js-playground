@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1>Oh, un exercice !</h1>
+    <h1>Exercice 1 : Déclaration de fonction</h1>
     <h2>
       Crée une fonction nommée <code>greet</code> qui renvoie la chaîne de caractères <code>"Hello world!"</code>
     </h2>
@@ -8,6 +8,7 @@
       v-model="code"
       class="editor"
       language="javascript"
+      theme="vs-dark"
     />
     <div class="text-center">
       <button
