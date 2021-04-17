@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { FontAwesomeIcon } from './plugins/fontawesome'
 
 import './main.css'
+import 'highlight.js/styles/vs2015.css'
 
 import App from './App.vue'
 import router from './router'

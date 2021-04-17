@@ -17,7 +17,8 @@
     />
 
     <div
-      v-if="showCourse"
+      v-show="showCourse"
+      ref="courseEl"
       v-html="htmlCourse"
     />
 
@@ -75,8 +76,13 @@
 </template>
 
 <script>
-import BasicButton from './BasicButton.vue'
-import { computed, ref } from '@vue/runtime-core'
+import { computed, onMounted, ref, watch } from 'vue'
+import { createHarness } from 'zora'
+import { indentedTapReporter } from 'zora-tap-reporter'
+
+import { highlightJsInEl } from '@/utils/highlight-utils.js'
+
+import BasicButton from '@/components/BasicButton.vue'
 import MonacoEditor from '@/components/MonacoEditor'
 
 import {
@@ -84,9 +90,6 @@ import {
   getWrongFeedback,
   getErrorFeedback,
 } from '../utils/index.js'
-
-import { createHarness } from 'zora'
-import { indentedTapReporter } from 'zora-tap-reporter'
 
 export default {
   name: 'AppExercize',
@@ -126,6 +129,7 @@ export default {
     const result = ref('')
     const resultClass = ref('')
     const error = ref('')
+    const courseEl = ref(null)
 
     const resetResultData = () => {
       intro.value = ''
@@ -138,9 +142,18 @@ export default {
     const toggleCourse = () => { showCourse.value = !showCourse.value }
     const btnText = computed(() => (`${showCourse.value ? 'Cacher' : 'Afficher'} les rappels de cours`))
 
+    onMounted(() => {
+      console.log(courseEl.value)
+    })
+
+    watch(showCourse, async (show) => {
+      if (show) {
+        highlightJsInEl(courseEl.value)
+      }
+    })
+
     const evaluate = async () => {
       resetResultData()
-
       const harness = createHarness()
       const { test } = harness // eslint-disable-line no-unused-vars
 
@@ -169,6 +182,7 @@ export default {
     return {
       btnText,
       code,
+      courseEl,
       intro,
       result,
       resultClass,

@@ -19,6 +19,6 @@ export const highlightJsInEl = (el) => {
     jsRegistered = true
   }
 
-  [...el.value.querySelectorAll('code.language-javascript')]
+  [...el.querySelectorAll('code.language-javascript')]
     .forEach(block => hljs.highlightBlock(block))
 }
