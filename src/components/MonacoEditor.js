@@ -5,14 +5,11 @@ export default {
   name: 'MonacoEditor',
 
   props: {
-    original: {
-      type: String,
-      default: '',
-    },
     modelValue: {
       type: String,
       default: '',
     },
+    readOnly: Boolean,
     theme: {
       type: String,
       default: 'vs',
@@ -25,7 +22,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    diffEditor: Boolean,
   },
 
   emits: ['editorWillMount', 'update:modelValue', 'editorDidMount'],
@@ -35,15 +31,14 @@ export default {
       deep: true,
       handler (options) {
         if (this.editor) {
-          const editor = this.getModifiedEditor()
-          editor.updateOptions(options)
+          this.editor.updateOptions(options)
         }
       },
     },
 
     modelValue (newValue) {
       if (this.editor) {
-        const editor = this.getModifiedEditor()
+        const editor = this.editor
         if (newValue !== editor.getValue()) {
           editor.setValue(newValue)
         }
@@ -52,7 +47,7 @@ export default {
 
     original (newValue) {
       if (this.editor && this.diffEditor) {
-        const editor = this.getOriginalEditor()
+        const editor = this.editor
         if (newValue !== editor.getValue()) {
           editor.setValue(newValue)
         }
@@ -61,14 +56,13 @@ export default {
 
     language (newVal) {
       if (this.editor) {
-        const editor = this.getModifiedEditor()
-        this.monaco.editor.setModelLanguage(editor.getModel(), newVal)
+        this.editor.setModelLanguage(this.editor.getModel(), newVal)
       }
     },
 
     theme (newVal) {
       if (this.editor) {
-        this.monaco.editor.setTheme(newVal)
+        this.editor.setTheme(newVal)
       }
     },
   },
@@ -76,9 +70,8 @@ export default {
   async mounted () {
     const monaco = await import('monaco-editor')
     this.monaco = monaco
-    this.$nextTick(() => {
-      this.initMonaco(monaco)
-    })
+    await this.$nextTick()
+    this.initMonaco(monaco)
   },
 
   beforeUnmount () {
@@ -87,36 +80,22 @@ export default {
 
   methods: {
     initMonaco (monaco) {
-      this.$emit('editorWillMount', this.monaco)
+      this.$emit('editorWillMount', monaco)
 
       const options = assign(
         {
           value: this.modelValue,
           theme: this.theme,
           language: this.language,
+          readOnly: this.readOnly,
         },
         this.options,
       )
 
-      if (this.diffEditor) {
-        this.editor = monaco.editor.createDiffEditor(this.$refs.root, options)
-        const originalModel = monaco.editor.createModel(
-          this.original,
-          this.language,
-        )
-        const modifiedModel = monaco.editor.createModel(
-          this.modelValue,
-          this.language,
-        )
-        this.editor.setModel({
-          original: originalModel,
-          modified: modifiedModel,
-        })
-      } else {
-        this.editor = monaco.editor.create(this.$refs.root, options)
-      }
+      this.editor = monaco.editor.create(this.$refs.root, options)
 
       const editor = this.editor
+
       editor.onDidChangeModelContent(event => {
         const value = editor.getValue()
         if (this.modelValue !== value) {
@@ -129,14 +108,6 @@ export default {
 
     getEditor () {
       return this.editor
-    },
-
-    getModifiedEditor () {
-      return this.diffEditor ? this.editor.getModifiedEditor() : this.editor
-    },
-
-    getOriginalEditor () {
-      return this.diffEditor ? this.editor.getOriginalEditor() : this.editor
     },
 
     focus () {

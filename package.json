@@ -8,17 +8,26 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "peeky run",
+    "test:open": "peeky open"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-regular-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/vue-fontawesome": "^3.0.0-3",
     "core-js": "^3.10.1",
     "monaco-editor": "^0.23.0",
     "monaco-editor-webpack-plugin": "^3.0.1",
     "register-service-worker": "^1.7.2",
+    "remarkable": "^2.0.1",
     "vue": "^3.0.4",
     "vue-monaco": "^1.2.2",
     "vue-router": "^4.0.3",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "zora": "^4.1.0",
+    "zora-tap-reporter": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.15",
@@ -34,6 +43,7 @@
     "@vue/compiler-sfc": "^3.0.11",
     "@vue/eslint-config-standard": "^6.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "autoprefixer": "^10.2.5",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.24.0",
     "eslint-plugin-import": "^2.22.1",
@@ -42,6 +52,10 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^7.9.0",
     "lint-staged": "^10.5.4",
+    "postcss": "^8.2.10",
+    "qunit": "^2.15.0",
+    "raw-loader": "^4.0.2",
+    "tailwindcss": "^2.1.1",
     "vue-jest": "^5.0.0-0",
     "vue-template-compiler": "^2.6.11"
   },

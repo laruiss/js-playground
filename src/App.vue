@@ -1,45 +1,28 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">
-        Exo 1
-      </router-link> |
-      <router-link to="/about">
-        Exo 2
-      </router-link>
-    </div>
-    <router-view />
+  <div
+    id="nav"
+    class="flex  justify-center  text-lg  font-bold"
+  >
+    <router-link to="/">
+      Home
+    </router-link>
+    <span class="mx-1">|</span>
+    <router-link to="/fn-one">
+      Exo 1
+    </router-link>
+    <span class="mx-1">|</span>
+    <router-link to="/about">
+      About
+    </router-link>
   </div>
+  <router-view />
 </template>
 
 <style>
-html,
-body,
-#app {
-  height: 100%;
-}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-h1,
-#nav {
-  text-align: center;
-}
-
-#nav a {
-  font-weight: bold;
-  color: var(--default-dark-color);
-}
-
-#nav a.router-link-exact-active {
-  color: var(--ok-color);
 }
 </style>
