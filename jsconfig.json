@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2015",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "moduleResolution": "classic"
+  }
+}
