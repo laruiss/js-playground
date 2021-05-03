@@ -64,7 +64,7 @@
         </p>
         <p>
           <b :class="resultClass">
-            {{ result }}
+            {{ resultFeedback }}
           </b>
           <em class="text-red">
             {{ error }}
@@ -72,13 +72,24 @@
         </p>
       </div>
     </div>
+    <div
+      v-show="report"
+      id="report"
+      :class="['report', result ? 'success' : 'error']"
+    >
+      <pre>{{ report }}</pre>
+    </div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import VueScrollTo from 'vue-scrollto'
+
 import { createHarness } from 'zora'
-import { indentedTapReporter } from 'zora-tap-reporter'
+// import { tapReporter } from 'zora-tap-reporter'
+import myReporter from '@/utils/my-reporter.js'
 
 import { highlightJsInEl } from '@/utils/highlight-utils.js'
 
@@ -122,19 +133,22 @@ export default {
     },
   },
 
-  setup (props) {
+  setup (props, ctx) {
+    const router = useRouter()
     const code = ref(props.initialCode)
     const testCode = ref(props.testCode)
     const intro = ref('')
-    const result = ref('')
+    const result = ref(undefined)
     const resultClass = ref('')
+    const resultFeedback = ref('')
     const error = ref('')
     const courseEl = ref(null)
 
     const resetResultData = () => {
       intro.value = ''
-      result.value = ''
+      result.value = undefined
       resultClass.value = ''
+      resultFeedback.value = ''
       error.value = ''
     }
 
@@ -142,22 +156,21 @@ export default {
     const toggleCourse = () => { showCourse.value = !showCourse.value }
     const btnText = computed(() => (`${showCourse.value ? 'Cacher' : 'Afficher'} les rappels de cours`))
 
-    onMounted(() => {
-      console.log(courseEl.value)
-    })
-
     watch(showCourse, async (show) => {
       if (show) {
         highlightJsInEl(courseEl.value)
       }
     })
 
+    const report = ref('')
+
     const evaluate = async () => {
       resetResultData()
+      report.value = ''
       const harness = createHarness()
-      const { test } = harness // eslint-disable-line no-unused-vars
 
       try {
+        const { test } = harness // eslint-disable-line no-unused-vars
         eval(code.value + ';' + testCode.value) // eslint-disable-line no-eval
       } catch (err) {
         intro.value = getErrorFeedback()
@@ -165,17 +178,19 @@ export default {
         return
       }
 
-      harness.report(indentedTapReporter()).then(() => {
-        // reporting is over: we can release some pending resources
-        console.log('Done!')
-        // or in this case, our test program is for node so we want to set the exit code ourselves in case of failing test.
+      harness.report(myReporter({ log (msg) { report.value += msg + '\n' } })).then(async () => {
+        // reporting is over
+        result.value = harness.pass
         if (harness.pass) {
-          result.value = getRightFeedback()
+          resultFeedback.value = getRightFeedback()
           resultClass.value = 'text-green'
         } else {
           resultClass.value = 'text-orange'
-          result.value = getWrongFeedback()
+          resultFeedback.value = getWrongFeedback()
         }
+        await nextTick()
+        router.push({ hash: '#report' })
+        VueScrollTo.scrollTo('#report')
       })
     }
 
@@ -184,6 +199,7 @@ export default {
       code,
       courseEl,
       intro,
+      report,
       result,
       resultClass,
       error,
@@ -195,13 +211,25 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .editor {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
   height: 200px;
   border: 1px solid #ccc;
+}
+
+.report {
+  @apply border  rounded  p-4;
+
+  &.error {
+    @apply border-red-500  bg-red-100  text-red-800;
+  }
+
+  &.success {
+    @apply border-green-500  bg-green-100  text-green-800;
+  }
 }
 
 .text-red {
