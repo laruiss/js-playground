@@ -29,6 +29,15 @@
       @click.prevent="toggleCourse"
     />
 
+    <button
+      id="start-togetherjs"
+      type="button"
+      data-end-togetherjs-html="End TogetherJS"
+      @click.prevent="() => window.TogetherJS(window)"
+    >
+      Collaborer
+    </button>
+
     <div class="flex">
       <div class="u-flex-w-1/2  mx-1">
         <p>

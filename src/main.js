@@ -9,9 +9,11 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-createApp(App)
+const app = createApp(App)
   .use(router)
   .use(store)
   .use(VueScrollTo)
   .component('fa-icon', FontAwesomeIcon)
-  .mount('#app')
+
+app.config.globalProperties.window = window
+app.mount('#app')
