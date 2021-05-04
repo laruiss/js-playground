@@ -112,4 +112,4 @@ const report = (factory) => (logger = console) => {
 }
 const tapReporter = report(factory)
 
-export default tapReporter
+export const myReporter = tapReporter

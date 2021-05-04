@@ -87,20 +87,10 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import VueScrollTo from 'vue-scrollto'
 
-import { createHarness } from 'zora'
-// import { tapReporter } from 'zora-tap-reporter'
-import myReporter from '@/utils/my-reporter.js'
-
-import { highlightJsInEl } from '@/utils/highlight-utils.js'
+import { highlightJsInEl, testReport } from '@/utils/index.js'
 
 import BasicButton from '@/components/BasicButton.vue'
 import MonacoEditor from '@/components/MonacoEditor'
-
-import {
-  getRightFeedback,
-  getWrongFeedback,
-  getErrorFeedback,
-} from '../utils/index.js'
 
 export default {
   name: 'AppExercize',
@@ -133,10 +123,9 @@ export default {
     },
   },
 
-  setup (props, ctx) {
+  setup (props) {
     const router = useRouter()
     const code = ref(props.initialCode)
-    const testCode = ref(props.testCode)
     const intro = ref('')
     const result = ref(undefined)
     const resultClass = ref('')
@@ -146,6 +135,7 @@ export default {
 
     const resetResultData = () => {
       intro.value = ''
+      report.value = ''
       result.value = undefined
       resultClass.value = ''
       resultFeedback.value = ''
@@ -166,32 +156,19 @@ export default {
 
     const evaluate = async () => {
       resetResultData()
-      report.value = ''
-      const harness = createHarness()
 
-      try {
-        const { test } = harness // eslint-disable-line no-unused-vars
-        eval(code.value + ';' + testCode.value) // eslint-disable-line no-eval
-      } catch (err) {
-        intro.value = getErrorFeedback()
-        error.value = err.message
-        return
-      }
+      const testResult = await testReport(code.value, props.testCode)
+      resultFeedback.value = testResult.feedback
+      intro.value = testResult.intro
+      error.value = testResult.error
+      result.value = testResult.result
+      report.value = testResult.report
 
-      harness.report(myReporter({ log (msg) { report.value += msg + '\n' } })).then(async () => {
-        // reporting is over
-        result.value = harness.pass
-        if (harness.pass) {
-          resultFeedback.value = getRightFeedback()
-          resultClass.value = 'text-green'
-        } else {
-          resultClass.value = 'text-orange'
-          resultFeedback.value = getWrongFeedback()
-        }
-        await nextTick()
-        router.push({ hash: '#report' })
-        VueScrollTo.scrollTo('#report')
-      })
+      resultClass.value = result.value ? 'text-green' : 'text-red'
+
+      await nextTick()
+      router.push({ hash: '#report' })
+      VueScrollTo.scrollTo('#report')
     }
 
     return {
