@@ -33,22 +33,38 @@
       <div class="u-flex-w-1/2  mx-1">
         <p>
           Votre code :
+          <span
+            v-if="!codeEditorReady"
+            class="italic"
+          >
+            Chargement...
+          </span>
         </p>
         <MonacoEditor
           v-model="code"
           class="editor"
           language="javascript"
           theme="vs"
+          @editor-did-mount="onCodeEditorReady"
         />
       </div>
       <div class="u-flex-w-1/2  mx-1">
-        <p>Doit passer ce test :</p>
+        <p>
+          Doit passer ce test :
+          <span
+            v-if="!testEditorReady"
+            class="italic"
+          >
+            Chargement...
+          </span>
+        </p>
         <MonacoEditor
           :model-value="testCode"
           class="editor"
           language="javascript"
           theme="vs-dark"
           :read-only="true"
+          @editor-did-mount="onTestEditorReady"
         />
       </div>
     </div>
@@ -124,6 +140,8 @@ export default {
   },
 
   setup (props) {
+    const codeEditorReady = ref(false)
+    const testEditorReady = ref(false)
     const router = useRouter()
     const code = ref(props.initialCode)
     const intro = ref('')
@@ -171,18 +189,31 @@ export default {
       VueScrollTo.scrollTo('#report')
     }
 
+    const onTestEditorReady = () => {
+      testEditorReady.value = true
+    }
+
+    const onCodeEditorReady = () => {
+      codeEditorReady.value = true
+    }
+
     return {
       btnText,
       code,
       courseEl,
+      error,
+      evaluate,
       intro,
+      codeEditorReady,
+      testEditorReady,
+      onCodeEditorReady,
+      onTestEditorReady,
       report,
       result,
       resultClass,
-      error,
+      resultFeedback,
       showCourse,
       toggleCourse,
-      evaluate,
     }
   },
 }

@@ -1,6 +1,5 @@
 <template>
   <div
-    ref="homeEl"
     class="home"
   >
     <h1>JavaScript</h1>
@@ -8,29 +7,31 @@
     <h2>Partie 1 : Les fonctions</h2>
 
     <app-exercise
+      v-if="ready"
       :initial-code="initialCode"
       :test-code="testCode"
       title="Les fonctions"
       :html-course="course"
       :statement="statement"
     />
+
+    <p
+      v-if="unknownExercise"
+      class="error"
+    >
+      Exercice introuvable...
+    </p>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+
 import AppExercise from '@/components/AppExercise.vue'
-import { ref } from '@vue/runtime-core'
-import testCodeRaw from '!!raw-loader!@/assets/exercises/fn-one-test.js' // eslint-disable-line import/no-webpack-loader-syntax
-import initialCodeRaw from '!!raw-loader!@/assets/exercises/fn-one-init.js' // eslint-disable-line import/no-webpack-loader-syntax
-import courseRaw from 'raw-loader!@/assets/exercises/fn-one-course.md' // eslint-disable-line import/no-webpack-loader-syntax
-import statementRaw from 'raw-loader!@/assets/exercises/fn-one-statement.md' // eslint-disable-line import/no-webpack-loader-syntax
 import { getMarkdownParser } from '@/utils/md-utils'
 
 const parseMd = getMarkdownParser()
-const course = parseMd(courseRaw)
-const statement = parseMd(statementRaw)
-
-// const getRawCode = url => fetch('/assets' + url).then(res => res.text())
 
 export default {
   name: 'ExercisePage',
@@ -47,16 +48,50 @@ export default {
   },
 
   setup () {
-    const homeEl = ref(null)
-    const testCode = ref(testCodeRaw)
-    const initialCode = ref(initialCodeRaw)
+    const exo = useRoute().params.exercise
+    const unknownExercise = ref(false)
+    const ready = ref(false)
+    const testCode = ref(undefined)
+    const initialCode = ref(undefined)
+    const course = ref(undefined)
+    const statement = ref(undefined)
+
+    Promise.all(
+      [
+        'test.js',
+        'init.js',
+        'course.md',
+        'statement.md',
+      ]
+        .map(
+          part => fetch(`/exercises/${exo}/${part}`)
+            .then(res => {
+              if (res.status === 404) {
+                throw new Error('UNKNOWN_EXERCISE')
+              }
+              return res
+            })
+            .then(res => res.text()),
+        ),
+    ).then(([testCodeRaw, initialCodeRaw, courseRaw, statementRaw]) => {
+      testCode.value = testCodeRaw
+      initialCode.value = initialCodeRaw
+      course.value = parseMd(courseRaw)
+      statement.value = parseMd(statementRaw)
+      ready.value = true
+    }).catch(err => {
+      if (err.message === 'UNKNOWN_EXERCISE') {
+        unknownExercise.value = true
+      }
+    })
 
     return ({
+      ready,
       course,
-      homeEl,
       initialCode,
       statement,
       testCode,
+      unknownExercise,
     })
   },
 }

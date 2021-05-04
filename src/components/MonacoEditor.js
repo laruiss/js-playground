@@ -24,7 +24,7 @@ export default {
     },
   },
 
-  emits: ['editorWillMount', 'update:modelValue', 'editorDidMount'],
+  emits: ['editorWillMount', 'update:modelValue', 'editorDidMount', 'ready'],
 
   watch: {
     options: {
