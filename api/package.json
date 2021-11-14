@@ -1,0 +1,32 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint src/**/*.js --fix",
+    "start": "node src/index.js",
+    "dev": "nodemon --inspect src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/boom": "^9.1.4",
+    "@hapi/hapi": "^20.2.1",
+    "hapi-auth-jwt2": "^10.2.0",
+    "joi": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/hapi__hapi": "^20.0.9",
+    "@types/node": "^16.11.7",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "nodemon": "^2.0.15"
+  }
+}

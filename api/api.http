@@ -1,0 +1,19 @@
+@apiPrefix = /api/v1
+@protocol = http
+@host = localhost
+@port = 4000
+
+@apiBaseUrl = {{protocol}}://{{host}}:{{port}}{{apiPrefix}}
+
+@users = /users
+@courses = /courses
+
+###
+GET {{apiBaseUrl}}{{users}} HTTP/1.1
+
+###
+POST {{apiBaseUrl}}{{{{users}}}} HTTP/1.1
+
+###
+GET {{apiBaseUrl}}{{courses}} HTTP/1.1
+
