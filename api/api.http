@@ -12,7 +12,18 @@
 GET {{apiBaseUrl}}{{users}} HTTP/1.1
 
 ###
-POST {{apiBaseUrl}}{{{{users}}}} HTTP/1.1
+POST {{apiBaseUrl}}{{users}} HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstname": "Stanislas",
+  "lastname": "Ormières",
+  "username": "stan",
+  "password": "S0qFkl8*J5DL",
+  "email": "stan@stormier.ninja",
+  "roles": ["ADMIN"]
+}
 
 ###
 GET {{apiBaseUrl}}{{courses}} HTTP/1.1

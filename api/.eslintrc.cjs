@@ -14,4 +14,12 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'always-multiline'],
   },
+  overrides: [
+    {
+      files: '*/**/*.spec.js',
+      env: {
+        jest: true,
+      },
+    },
+  ],
 }

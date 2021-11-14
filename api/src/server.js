@@ -10,4 +10,14 @@ const server = Hapi.server({
   host,
 })
 
+server.events.on('log', (event, tags) => {
+  console.log(tags)
+  if (tags.error) {
+    console.log(`Server error: ${event.error ? event.error.message : 'unknown'}`)
+  }
+  if (tags.warn) {
+    console.log(`Server warning: ${event.error ? event.error.message : 'unknown'}`)
+  }
+})
+
 export default server
